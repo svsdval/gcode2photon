@@ -2,8 +2,6 @@
 Use Cura generated gcode in photon ;)
 examples:
 ![example_0](docs/example_0.png?raw=true)
-![example_1](docs/example_1.png?raw=true)
-![example_2](docs/example_2.png?raw=true)
 
 Step 1, setup new custom printer with X=68 Y=120 Z=150:
 ![step1_printer_settings_1.png](docs/step1_printer_settings_1.png?raw=true)
