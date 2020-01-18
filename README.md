@@ -3,6 +3,17 @@ Use Cura generated gcode in photon ;)
 examples:
 ![example_0](docs/example_0.png?raw=true)
 
+# dependency
+- python 2/3
+- python-pil
+
+# install dependency
+
+### GNU/Linux:
+```bash
+sudo apt install python-pil
+```
+
 ### Step 1, setup new custom printer with X=68 Y=120 Z=150:
 ![step1_printer_settings_1.png](docs/step1_printer_settings_1.png?raw=true)
 
@@ -14,6 +25,10 @@ examples:
 ![model_2.png](docs/model_2.png?raw=true)
 
 ### Step 3, run gcode2photon, with python
+```bash
+python ./gcode2images.py my_gcode_file.gcode
+```
+
 ![step3_run_g2p.png](docs/step3_run_g2p.png?raw=true)
 
 ### Step 3.1 if ok, you will see something like this:
