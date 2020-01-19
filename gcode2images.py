@@ -21,26 +21,28 @@ if not os.path.exists('layers'):
 f = open(path, "r");
 n =0;
 
+# setup image resolution
 img_width=1440;
 img_height=2560;
+# get pixels in mm
+pw=img_height/120.96;
+# setup line width
+LW = 2;
 
+#
 img = Image.new('RGB', [img_width,img_height], 0)
 draw = ImageDraw.Draw(img)
 data = img.load()
 
-layerid="";
-c=0;
+#
 lb=[0,0];
 le=(0,0);
-extr=0;
-prev=0;
 seg=[];
-pw=img_height/120.96;
-LW = 2;
-
 
 currentLayerIdx = 0
 currentLayerZ = 0
+
+# first time prev command is empty
 prev= {
 	"C":"-",
 	"X":0.0,
@@ -53,22 +55,20 @@ prev= {
 
 
 def parse(l):
- global extr;
  global prev;
  global currentLayerIdx
  global currentLayerZ
 
  scmd = re.sub("\([^)]*\)", "", l.upper())
  ## then semicolons
- idx = scmd.find(';')
- if idx >= 0:
-  scmd = scmd[0:idx].strip()
- # detect unterminated round bracket comments, just in case
- idx = scmd.find('(')
- if idx >= 0:
-  self.warn("Stripping unterminated round-bracket comment")
-  scmd = scmd[0:idx].strip();
-# print(scmd);
+ symidx = scmd.find(';')
+ if symidx >= 0:
+  scmd = scmd[0:symidx].strip()
+
+ symidx = scmd.find('(')
+ if symidx >= 0:
+  scmd = scmd[0:symidx].strip();
+
  cmd= {
 	"C":"-",
 	"X":0.0,
@@ -78,6 +78,7 @@ def parse(l):
 	"E":0.0,
 	"T":0,
         "L":0 };
+
 # if scmd == "": 
 #  cmd["C"] = "-"
 #  return cmd;
@@ -91,8 +92,6 @@ def parse(l):
    continue;
 
   cmd[x[:1]] = float(x[1:]);
-# if prev == 0:
-#  prev = cmd;
 
  cmdtype = "move"
  if ( (cmd["X"] == prev["X"]) and (cmd["Y"] == prev["Y"]) and (cmd["E"] != prev["E"]) ):
@@ -106,10 +105,10 @@ def parse(l):
    currentLayerIdx += 1
    print("currentLayerZ",currentLayerZ, " currentLayerIdx=",currentLayerIdx);
 
- # set cmdtype and layer in cmdment
+ # set cmdtype and layer index for command
  cmd["T"] = cmdtype
  cmd["L"] = currentLayerIdx;
- # execute cmdment
+ # save as last command, to combare with new command after...
  prev = cmd
 
  #print (cmd);
@@ -126,8 +125,8 @@ for l in f:
  cmd = parse(l);
  seg.append(cmd);
 
- if cmd["C"] == "-":
-  continue;
+ #if cmd["C"] == "-":
+ # continue;
 
  #print(cmd);
 
@@ -136,23 +135,22 @@ for l in f:
   print("Z", old_z)
   old_z = cmd["L"];
   #
-  #
+  # check if we have segments to draw..
   empty=1;
   for i in range(len(seg)):
     if seg[i]["T"] == "extrude":
       empty=0;
-  
+  # if not, then
   if empty:
    print("skip.." , old_z)
    continue
 
   layer_idx+=1;
-
-  #print(va);
+  # Create new image with black fill
   img = Image.new('RGB', [img_width,img_height], 0)
   draw = ImageDraw.Draw(img)
   lb= seg2vec(seg[0]);
-
+  # Draw segments:
   for i in range(len(seg)):
     if seg[i]["T"] != "extrude":
      continue;
@@ -165,14 +163,17 @@ for l in f:
      le=lb;
 
     draw.line([ lb[0], lb[1], le[0],le[1] ], width=LW, fill="#FFFFFF");
+  # generate image id
   si=str(layer_idx);
   while len(si) < 7:
     si="0"+si;
   s="layers/layer_"+si+".png"
+  # save to file
   print("save layer to file:"+s);
   img.save(s);
-
+  # and print we got a new layer
   print("New Layer");
+  # remove all old not needed layer segments
   seg[:] = [];
 
 f.close();
