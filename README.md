@@ -3,10 +3,10 @@ Use Cura generated gcode in photon ;)
 examples:
 ![example_0](docs/example_0.png?raw=true)
 
-- x=2.9mm y=4.5mm z=7.3mm full fill = 43g
+- x=2.9cm y=4.5cm z=7.3cm full fill = 43g
 ![printer result](docs/result_2.jpg?raw=true)
 
-- x=4.93mm y=7.6mm z=12.41mm = 51g with 5% infill, 70% more than the original and only 8g heavier.
+- x=4.93cm y=7.6cm z=12.41cm = 51g with 5% infill, 70% more than the original and only 8g heavier.
 ![printer result](docs/result_1.jpg?raw=true)
 
 - If the wall thickness is small, an internal mesh can be seen.
